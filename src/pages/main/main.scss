@@ -1,0 +1,22 @@
+.item {
+}
+
+.child-item {
+	top: 2rem;
+	left: -6rem;
+	width: 130px;
+
+	visibility: hidden;
+}
+.child-item::after {
+	content: '';
+	width: 130px;
+	height: 20px;
+
+	position: absolute;
+	top: -10px;
+	left: 0;
+}
+.item:hover .child-item {
+	visibility: visible;
+}

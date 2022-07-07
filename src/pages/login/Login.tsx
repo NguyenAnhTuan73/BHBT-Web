@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Checkbox, Form, Input, message } from 'antd';
 
 import { MailOutlined, LockOutlined } from '@ant-design/icons';
-
+import { setAccessToken, setUserAndPasswordLocal } from '../../helper/tokenHelper';
 import { userLogin } from '../../service/auth/AuthService';
 
-import bg from '../../asset/images/bg-blue.jpg';
+import bgImg from '../../asset/images/bg-blue.jpg';
 import logo from '../../asset/images/logo.png';
 import useAppLoading from '../../hook/useAppLoading';
 
@@ -14,6 +14,7 @@ import '../../styles/index.scss';
 
 const Login = () => {
 	const navigate = useNavigate();
+
 	var CryptoJS = require('crypto-js');
 	const [, setAppLoading] = useAppLoading();
 	const onFinish = (values: any) => {
@@ -28,23 +29,32 @@ const Login = () => {
 		});
 		const realPass = CryptoJS.enc.Base64.stringify(resultPassword);
 		// return CryptoJS.enc.Base64.stringify(result);
+		const realParams = {
+			userName: values.userName,
+			password: values.password,
+		};
 		const params = {
 			userName: values.userName,
 			password: realPass,
 		};
 		console.log('param:', params);
+		console.log('values', values);
 		userLogin(params)
 			.then(res => {
+				console.log('res', res);
 				message.success('Đăng nhập thành công');
+				setAccessToken(res.data.data.accessToken);
+
 				console.log(res);
 				navigate('/main');
+
+				localStorage.setItem('password', values.password);
 			})
 			.catch(error => {
 				if (error.code === 'ERR_BAD_REQUEST') {
 					message.error('Tài khoản hoặc mật khẩu không đúng');
 				}
 				console.log('error', error);
-				console.log('hihi');
 			});
 	};
 
@@ -52,7 +62,7 @@ const Login = () => {
 		console.log('Failed:', errorInfo);
 	};
 	return (
-		<div style={{ backgroundImage: `url(${bg})` }} className="section flex items-center justify-center">
+		<div style={{ backgroundImage: `url(${bgImg})` }} className="section flex items-center justify-center">
 			<div className="w-[75%] h-[500px] ] ">
 				<Form
 					name="basic"

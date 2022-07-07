@@ -11,6 +11,8 @@ import { store } from '../src/app/store';
 import Login from './pages/login/Login';
 import Main from './pages/main/Main';
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
+import MainContent from './components/main-content/MainContent';
+import ChangePassword from './components/main-content/change-password/ChangePassword';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
@@ -19,7 +21,10 @@ root.render(
 			<BrowserRouter>
 				<Routes>
 					<Route index element={<Login />} />
-					<Route path="/main" element={<Main />} />
+					<Route path="/main" element={<Main />}>
+						<Route index element={<MainContent />} />
+						<Route path="change-password" element={<ChangePassword />} />
+					</Route>
 				</Routes>
 			</BrowserRouter>
 		</Provider>
