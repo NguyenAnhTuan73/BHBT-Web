@@ -45,3 +45,8 @@ export interface typeChangePassword {
 	oldPassword: string;
 	password: string;
 }
+export interface typeCreateUser {
+	username: string;
+	password: string;
+	email: string;
+}

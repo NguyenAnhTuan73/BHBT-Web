@@ -14,6 +14,14 @@ import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 import MainContent from './components/main-content/MainContent';
 import ChangePassword from './components/main-content/change-password/ChangePassword';
 
+import AccountManager from './pages/account-manager/AccountManager';
+import MachineDataManager from './pages/machine-data-manager/MachineDataManager';
+import MajorManager from './pages/major-manager/MajorManager';
+import MainDataManager from './pages/main-data-manager/MainDataManager';
+import NotFound from './pages/404/NotFound';
+import UserAccount from './pages/account-manager/user-account/UserAccount';
+import UserRole from './pages/account-manager/user-role/UserRole';
+
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
 	<React.StrictMode>
@@ -24,6 +32,13 @@ root.render(
 					<Route path="/main" element={<Main />}>
 						<Route index element={<MainContent />} />
 						<Route path="change-password" element={<ChangePassword />} />
+						<Route path="account-manager" element={<AccountManager />}></Route>
+						<Route path="account-manager/user-account" element={<UserAccount />} />
+						<Route path="account-manager/user-role" element={<UserRole />} />
+						<Route path="main-data-manager" element={<MainDataManager />} />
+						<Route path="machine-data-manager" element={<MachineDataManager />} />
+						<Route path="major-manager" element={<MajorManager />} />
+						<Route path="*" element={<NotFound />} />
 					</Route>
 				</Routes>
 			</BrowserRouter>

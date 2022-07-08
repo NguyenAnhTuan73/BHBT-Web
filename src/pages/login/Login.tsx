@@ -29,10 +29,7 @@ const Login = () => {
 		});
 		const realPass = CryptoJS.enc.Base64.stringify(resultPassword);
 		// return CryptoJS.enc.Base64.stringify(result);
-		const realParams = {
-			userName: values.userName,
-			password: values.password,
-		};
+
 		const params = {
 			userName: values.userName,
 			password: realPass,
@@ -45,7 +42,6 @@ const Login = () => {
 				message.success('Đăng nhập thành công');
 				setAccessToken(res.data.data.accessToken);
 
-				console.log(res);
 				navigate('/main');
 
 				localStorage.setItem('password', values.password);
