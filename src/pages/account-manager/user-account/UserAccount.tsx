@@ -1,17 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Input, Select, Table, Modal } from 'antd';
-import { SearchOutlined, EditOutlined } from '@ant-design/icons';
-import { getListAllStaff, getAllUsers } from '../../../service/auth/AuthService';
-import PopUp from './popup/PopUp';
 
+import { SearchOutlined, EditOutlined, ConsoleSqlOutlined, KeyOutlined } from '@ant-design/icons';
+import { getListAllStaff, getAllUsers } from '../../../service/auth/AuthService';
+import SurfaceCreateUser from './surfaceCreateUser/SurfaceCreateUser';
+import { iteratorSymbol } from 'immer/dist/internal';
+import SurfaceUpdateAccount from './surfaceUpdateAccount/SurfaceUpdateAccount';
+const { Option } = Select;
 const UserAccount = () => {
 	const [pageSize, setPageSize] = useState(5);
 	const [totalPages, setTotalPages] = useState(1);
 	const [listAllUsers, setListAllUser] = useState([]);
+	const [nameRole, setNameRole] = useState({});
 	const [loading, setLoading] = useState<boolean>(false);
 	// show modal
 
 	const [isModalVisible, setIsModalVisible] = useState(false);
+	const [isModalUpdateVisible, setIsModalUpdateVisible] = useState(false);
 
 	const showModal = () => {
 		setIsModalVisible(true);
@@ -23,13 +28,21 @@ const UserAccount = () => {
 	const handleCancel = () => {
 		setIsModalVisible(false);
 	};
-
+	// modal update account
+	const showModalUpdate = () => {
+		setIsModalUpdateVisible(true);
+	};
+	const handleUpdateOk = () => {
+		setIsModalUpdateVisible(false);
+	};
+	const handleUpdateCancel = () => {
+		setIsModalUpdateVisible(false);
+	};
 	useEffect(() => {
 		setLoading(true);
 
 		getAllUsers()
 			.then(res => {
-				console.log('resalluser', res);
 				setListAllUser(res.data.data);
 				setTotalPages(listAllUsers.length);
 				setLoading(false);
@@ -38,6 +51,10 @@ const UserAccount = () => {
 				console.log('e', e);
 			});
 	}, []);
+
+	const dataListRole = listAllUsers.map((item: any, index: number) => {
+		return item.userGroup.name;
+	});
 
 	const columns = [
 		{ title: 'STT', dataIndex: 'stt' },
@@ -56,7 +73,15 @@ const UserAccount = () => {
 			email: item.email,
 			vai_tro_nguoi_dung: item.userGroup.name,
 			trang_thai: item.status.value,
-			thao_tac: <EditOutlined />,
+			thao_tac: (
+				<>
+					<EditOutlined
+						onClick={showModalUpdate}
+						style={{ color: ' red', marginRight: '10px', cursor: 'pointer' }}
+					/>
+					<KeyOutlined style={{ cursor: 'pointer' }} />
+				</>
+			),
 		};
 	});
 	return (
@@ -73,16 +98,21 @@ const UserAccount = () => {
 				<div className="mb-4 flex">
 					<div className="mr-3">
 						<h2>Trạng thái</h2>
-						<Select placeholder="--Tất cả-" style={{ width: '150px' }}>
-							<Select.Option>Đang hoạt động</Select.Option>
-							<Select.Option>Vô hiệu hoá</Select.Option>
+						<Select defaultValue={'--Tất cả-'} style={{ width: '150px' }}>
+							<Option value="Đang hoạt động">Đang hoạt động</Option>
+							<Option value="Vô hiệu hoá">Vô hiệu hoá</Option>
 						</Select>
 					</div>
 					<div>
 						<h2>Vai trò người dùng</h2>
-						<Select placeholder="--Tất cả-" style={{ width: '150px' }}>
-							<Select.Option>Đang hoạt động</Select.Option>
-							<Select.Option>Vô hiệu hoá</Select.Option>
+						<Select defaultValue={'-Tất cả-'} style={{ width: '150px' }}>
+							{dataListRole
+								.filter((item: any, i: number) => dataListRole.indexOf(item) === i)
+								.map((item: any, inx: number) => (
+									<Option value={item} key={inx}>
+										{item}
+									</Option>
+								))}
 						</Select>
 					</div>
 				</div>
@@ -94,11 +124,17 @@ const UserAccount = () => {
 						loading={loading}
 					/>
 					<div className="">
-						<PopUp
+						<SurfaceCreateUser
 							isModalVisible={isModalVisible}
-							showModal={showModal}
 							handleOk={handleOk}
 							handleCancel={handleCancel}
+							setIsModalVisible={setIsModalVisible}
+						/>
+						<SurfaceUpdateAccount
+							isModalUpdateVisible={isModalUpdateVisible}
+							showModalUpdate={showModalUpdate}
+							handleUpdateOk={handleUpdateOk}
+							handleUpdateCancel={handleUpdateCancel}
 						/>
 					</div>
 				</div>

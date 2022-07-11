@@ -91,12 +91,12 @@ const ChangePassword = () => {
 							},
 							{ min: 8, message: 'Mật khẩu tối thiểu 8 ký tự' },
 							{ whitespace: true },
-							// {
-							// 	validator: (_, value) =>
-							// 		value && value.includes('A')
-							// 			? Promise.resolve()
-							// 			: Promise.reject('Password does not match criteria.'),
-							// },
+							{
+								validator: (_, value) =>
+									value && value.includes('A')
+										? Promise.resolve()
+										: Promise.reject('Password does not match criteria.'),
+							},
 						]}
 					>
 						<Input.Password size="small" />

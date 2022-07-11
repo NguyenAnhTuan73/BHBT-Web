@@ -48,8 +48,6 @@ const items: MenuProps['items'] = [
 
 const Main: React.FC = () => {
 	const onClick: MenuProps['onClick'] = e => {
-		console.log('click ', e);
-
 		navigate(`${e.key}`);
 	};
 
@@ -125,10 +123,9 @@ const Main: React.FC = () => {
 			<Content style={{ padding: '0 50px' }}>
 				<div className="bg-white w-full p-2 h-[50px] flex items-center leading-[50px]">
 					{items.map((item: any, index: number) => (
-						<div className="">
+						<div key={index} className="">
 							<h1
 								className=""
-								key={index}
 								style={{
 									display: item.key === url || item.key === 'account-manager' ? 'block' : 'none',
 									lineHeight: '50px',

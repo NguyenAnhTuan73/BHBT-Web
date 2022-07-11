@@ -10,7 +10,7 @@ import { store } from '../src/app/store';
 
 import Login from './pages/login/Login';
 import Main from './pages/main/Main';
-import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
+import 'antd/dist/antd.min.css';
 import MainContent from './components/main-content/MainContent';
 import ChangePassword from './components/main-content/change-password/ChangePassword';
 

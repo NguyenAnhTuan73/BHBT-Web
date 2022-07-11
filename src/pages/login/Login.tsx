@@ -34,11 +34,9 @@ const Login = () => {
 			userName: values.userName,
 			password: realPass,
 		};
-		console.log('param:', params);
-		console.log('values', values);
+
 		userLogin(params)
 			.then(res => {
-				console.log('res', res);
 				message.success('Đăng nhập thành công');
 				setAccessToken(res.data.data.accessToken);
 
