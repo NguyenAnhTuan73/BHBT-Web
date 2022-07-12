@@ -50,3 +50,12 @@ export interface typeCreateUser {
 	password: string;
 	email: string;
 }
+export interface typeUpdateUser {
+	id: string;
+	email: string;
+	employeeId: string;
+	userGroupId: string;
+}
+export interface typeAnyUser {
+	id: string;
+}

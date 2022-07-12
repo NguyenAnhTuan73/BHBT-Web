@@ -2,7 +2,13 @@ import apiClient from '../../config/apiClient';
 import { deleteAccessToken, setAccessToken, setToken } from '../../helper/tokenHelper';
 import { configApp } from '../../config/config';
 
-import { authInterface, typeChangePassword, typeCreateUser } from '../../interface/auth/auth.interface';
+import {
+	authInterface,
+	typeChangePassword,
+	typeCreateUser,
+	typeUpdateUser,
+	typeAnyUser,
+} from '../../interface/auth/auth.interface';
 
 export const userLogin = async (auth: authInterface) => {
 	return await apiClient.post('/user/login', auth);
@@ -32,4 +38,13 @@ export const postNewsUser = async (params: typeCreateUser) => {
 };
 export const getAllUsers = async () => {
 	return await apiClient.get(`/user/get-all`);
+};
+export const putUpdateUser = async (params: typeUpdateUser) => {
+	return await apiClient.put(`/user/update`, params);
+};
+export const putResetPasswordUser = async (params: typeAnyUser) => {
+	return await apiClient.put(`/user/reset-password`, params);
+};
+export const putChangeActivity = async (params: any) => {
+	return await apiClient.put(`/user/change-activity`, params);
 };

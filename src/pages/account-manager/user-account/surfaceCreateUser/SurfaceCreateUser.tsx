@@ -3,14 +3,13 @@ import { Form, Input, Select, Button, Modal, message } from 'antd';
 import { getAllUsers, postNewsUser } from '../../../../service/auth/AuthService';
 const { Option } = Select;
 const PopUp = ({ isModalVisible, handleOk, handleCancel }: any) => {
-	const [formatForm] = Form.useForm();
+	const [form] = Form.useForm();
 	const [popUp, setPopUp] = useState([]);
 	const [objectFind, setObjectFind] = useState({});
 	const [groupUserId, setGroupUserId] = useState('');
 	useEffect(() => {
 		getAllUsers()
 			.then(res => {
-				console.log('respopup', res);
 				setPopUp(res.data.data);
 			})
 			.catch(error => {
@@ -47,8 +46,7 @@ const PopUp = ({ isModalVisible, handleOk, handleCancel }: any) => {
 				message.success('Tạo tài khoản mới thành công');
 			})
 			.catch(error => {
-				console.log('wwwww', error);
-				message.error('Thất bại');
+				message.error('Tạo tài khoản thất bại');
 			});
 	};
 	const onFinishFailed = (errorInfo: any) => {
@@ -56,7 +54,7 @@ const PopUp = ({ isModalVisible, handleOk, handleCancel }: any) => {
 	};
 
 	if (!isModalVisible) {
-		formatForm.setFieldsValue({
+		form.setFieldsValue({
 			staff: '',
 			username: '',
 			email: '',
@@ -70,7 +68,7 @@ const PopUp = ({ isModalVisible, handleOk, handleCancel }: any) => {
 		<Modal closable={false} footer={null} visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
 			<h1>TẠO MỚI TÀI KHOẢN NGƯỜI DÙNG</h1>
 			<Form
-				form={formatForm}
+				form={form}
 				name="basic"
 				labelCol={{ span: 8 }}
 				wrapperCol={{ span: 16 }}

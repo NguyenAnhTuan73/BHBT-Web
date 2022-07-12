@@ -1,22 +1,32 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Select, Table, Modal } from 'antd';
+import { Form, Input, Select, Table, Modal, Space, Switch } from 'antd';
 
 import { SearchOutlined, EditOutlined, ConsoleSqlOutlined, KeyOutlined } from '@ant-design/icons';
 import { getListAllStaff, getAllUsers } from '../../../service/auth/AuthService';
-import SurfaceCreateUser from './surfaceCreateUser/SurfaceCreateUser';
 import { iteratorSymbol } from 'immer/dist/internal';
+import SurfaceCreateUser from './surfaceCreateUser/SurfaceCreateUser';
 import SurfaceUpdateAccount from './surfaceUpdateAccount/SurfaceUpdateAccount';
+import SurfaceCreatePassword from './surfaceCreatePassword/SurfaceCreatePassword';
+import SurfaceEnable from './surfaceChangeActivity/SurfaceEnable';
+import SurfaceDisable from './surfaceChangeActivity/SurfaceDisable';
+
 const { Option } = Select;
 const UserAccount = () => {
 	const [pageSize, setPageSize] = useState(5);
 	const [totalPages, setTotalPages] = useState(1);
 	const [listAllUsers, setListAllUser] = useState([]);
-	const [nameRole, setNameRole] = useState({});
+	const [itemNameEdit, setItemNameEdit] = useState('');
+	const [createPw, setCreatePw] = useState('');
 	const [loading, setLoading] = useState<boolean>(false);
 	// show modal
 
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [isModalUpdateVisible, setIsModalUpdateVisible] = useState(false);
+	const [isModalCreatePwVisible, setIsModalCreatePwVisible] = useState(false);
+	// const [isModalEnable, setIsModalEnable] = useState(false);
+	const [isModalDisable, setIsModalDisable] = useState(false);
+	const [itemId, setItemId] = useState('');
+	const [checked, setCheked] = useState(true);
 
 	const showModal = () => {
 		setIsModalVisible(true);
@@ -29,6 +39,7 @@ const UserAccount = () => {
 		setIsModalVisible(false);
 	};
 	// modal update account
+
 	const showModalUpdate = () => {
 		setIsModalUpdateVisible(true);
 	};
@@ -37,6 +48,25 @@ const UserAccount = () => {
 	};
 	const handleUpdateCancel = () => {
 		setIsModalUpdateVisible(false);
+	};
+	const handleClickEdit = (params: any) => {
+		setItemNameEdit(params.ten_dang_nhap);
+		showModalUpdate();
+	};
+	// MODAL NEW CREATE PASSWORD
+
+	const showModalCreatePw = () => {
+		setIsModalCreatePwVisible(true);
+	};
+	const handleCreatePwOk = () => {
+		setIsModalCreatePwVisible(false);
+	};
+	const handleCreatePwCancel = () => {
+		setIsModalCreatePwVisible(false);
+	};
+	const handleClickCreatePw = (params: any) => {
+		setCreatePw(params.ten_dang_nhap);
+		showModalCreatePw();
 	};
 	useEffect(() => {
 		setLoading(true);
@@ -62,8 +92,28 @@ const UserAccount = () => {
 		{ title: 'Nhân viên', dataIndex: 'nhan_vien' },
 		{ title: 'Email', dataIndex: 'email' },
 		{ title: 'Vai trò người dùng', dataIndex: 'vai_tro_nguoi_dung' },
-		{ title: 'Trạng thái', dataIndex: 'trang_thai' },
-		{ title: 'Thao tác', dataIndex: 'thao_tac' },
+		{
+			title: 'Trạng thái',
+			dataIndex: 'trang_thai',
+		},
+		{
+			title: 'Thao tác',
+			dataIndex: 'thao_tac',
+			render: (_: any, record: any) => (
+				<Space size="middle">
+					<EditOutlined
+						onClick={() => {
+							handleClickEdit(record);
+						}}
+					/>
+					<KeyOutlined
+						onClick={() => {
+							handleClickCreatePw(record);
+						}}
+					/>
+				</Space>
+			),
+		},
 	];
 	const dataListAllUser = listAllUsers.map((item: any, i: number) => {
 		return {
@@ -72,18 +122,39 @@ const UserAccount = () => {
 			nhan_vien: item.employee?.name,
 			email: item.email,
 			vai_tro_nguoi_dung: item.userGroup.name,
-			trang_thai: item.status.value,
+			trang_thai: <Switch checked={true} onClick={() => handleClickActivity(item.id)} />,
 			thao_tac: (
 				<>
-					<EditOutlined
-						onClick={showModalUpdate}
-						style={{ color: ' red', marginRight: '10px', cursor: 'pointer' }}
-					/>
+					<EditOutlined style={{ color: ' red', marginRight: '10px', cursor: 'pointer' }} />
 					<KeyOutlined style={{ cursor: 'pointer' }} />
 				</>
 			),
 		};
 	});
+	// MODAL SURFACE DISABLE AND ENABLE
+	const showModalDisable = () => {
+		setIsModalDisable(true);
+	};
+	const handleDisableOk = () => {
+		setIsModalDisable(false);
+		// setIsChangeActivity(false);
+	};
+
+	const handleDisableCancel = () => {
+		setIsModalDisable(false);
+	};
+
+	// const onChange = (checked: boolean) => {
+	// 	setIsChangeActivity(checked);
+	// 	if (checked === false) {
+	// 	}
+	// 	console.log(`switch to ${checked}`);
+	// };
+	const handleClickActivity = (id: any) => {
+		showModalDisable();
+		setItemId(id);
+		console.log('hello', id);
+	};
 	return (
 		<div className="h-full">
 			<div className="h-full">
@@ -135,6 +206,22 @@ const UserAccount = () => {
 							showModalUpdate={showModalUpdate}
 							handleUpdateOk={handleUpdateOk}
 							handleUpdateCancel={handleUpdateCancel}
+							itemNameEdit={itemNameEdit}
+						/>
+						<SurfaceCreatePassword
+							isModalCreatePwVisible={isModalCreatePwVisible}
+							setIsModalCreatePwVisible={setIsModalCreatePwVisible}
+							handleCreatePwOk={handleCreatePwOk}
+							handleCreatePwCancel={handleCreatePwCancel}
+							listAllUsers={listAllUsers}
+							createPw={createPw}
+						/>
+						<SurfaceDisable
+							isModalDisable={isModalDisable}
+							showModalDisable={showModalDisable}
+							handleDisableOk={handleDisableOk}
+							handleDisableCancel={handleDisableCancel}
+							itemId={itemId}
 						/>
 					</div>
 				</div>

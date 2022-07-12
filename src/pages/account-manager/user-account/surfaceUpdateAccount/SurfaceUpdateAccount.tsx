@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Input, Select, Button, Modal, message } from 'antd';
-import { getAllUsers } from '../../../../service/auth/AuthService';
+import { getAllUsers, putUpdateUser } from '../../../../service/auth/AuthService';
+import { typeUpdateUser } from '../../../../interface/auth/auth.interface';
+import { isThrowStatement } from 'typescript';
 const { Option } = Select;
 const SurfaceUpdateAccount = (props: any) => {
-	const { isModalUpdateVisible, handleUpdateOk, handleUpdateCancel } = props;
+	const [formEdit] = Form.useForm();
+	const { isModalUpdateVisible, handleUpdateOk, handleUpdateCancel, itemNameEdit } = props;
 	const [dataAllUser, setDataAllUser] = useState([]);
 	useEffect(() => {
 		getAllUsers()
 			.then(res => {
-				console.log('respopup', res);
 				setDataAllUser(res.data.data);
 			})
 			.catch(error => {
@@ -19,13 +21,51 @@ const SurfaceUpdateAccount = (props: any) => {
 	const popUpNameRole = dataAllUser.map((item: any, index: number) => {
 		return item.userGroup.name;
 	});
+	// uptade user account
+	const usersName = dataAllUser.map((item: any, index: number) => {
+		return item.username;
+	});
 
 	const onFinish = (values: any) => {
-		console.log('data info', values);
+		const resultsUserName = dataAllUser
+			.filter((item: any) => {
+				return item.status.displayText === 'Đang hoạt động';
+			})
+			.map((item: any, index: number) => {
+				if (item.employee !== null && item.userGroup !== null) {
+					return item;
+				}
+			});
+		const resultFind = resultsUserName.find((item: any) => item.employee.name === values.staff);
+		console.log('upppppppppppppp', resultFind);
+		const params = {
+			id: resultFind.id,
+			email: values.email,
+			employeeId: resultFind.employee.id,
+			userGroupId: resultFind.userGroup.id,
+		};
+		putUpdateUser(params)
+			.then(res => {
+				console.log('res update', res);
+				message.success('Cập nhật tài khoản người dùng thành công');
+			})
+			.catch(error => {
+				console.log(error);
+				message.error('Cập nhật tài khoản thất bại');
+			});
 	};
+
 	const onFinishFailed = (errorInfo: any) => {
 		console.log('Failed:', errorInfo);
 	};
+	if (!isModalUpdateVisible) {
+		formEdit.setFieldsValue({
+			staff: '',
+			login: '',
+			email: '',
+			userrole: '',
+		});
+	}
 
 	return (
 		<Modal
@@ -37,6 +77,7 @@ const SurfaceUpdateAccount = (props: any) => {
 		>
 			<h1>CẬP NHẬT TÀI KHOẢN NGƯỜI DÙNG</h1>
 			<Form
+				form={formEdit}
 				name="basic"
 				labelCol={{ span: 8 }}
 				wrapperCol={{ span: 16 }}
@@ -63,28 +104,29 @@ const SurfaceUpdateAccount = (props: any) => {
 					</Select>
 				</Form.Item>
 				<Form.Item
-					name="username"
+					name="login"
 					label={
 						<label className="font-semibold">
 							Tên đăng nhập <span className="text-[#FF0000]">(*)</span>
 						</label>
 					}
-					rules={[
-						{
-							validator(rule, value) {
-								const checkLogin = /^[A-Za-z0-9 ]+$/;
-								if (value === '' || value === undefined || value === null) {
-									return Promise.reject(new Error('Vui lòng nhập tên đăng nhập'));
-								} else if (!checkLogin.test(value)) {
-									return Promise.reject(new Error('Chỉ nhập được sô và chữ'));
-								} else {
-									return Promise.resolve();
-								}
-							},
-						},
-					]}
+					// rules={[
+					// 	{
+					// 		validator(rule, value) {
+					// 			const checkLogin = /^[A-Za-z0-9 ]+$/;
+					// 			if (value === '' || value === undefined || value === null) {
+					// 				return Promise.reject(new Error('Vui lòng nhập tên đăng nhập'));
+					// 			} else if (!checkLogin.test(value)) {
+					// 				return Promise.reject(new Error('Chỉ nhập được sô và chữ'));
+					// 			} else {
+					// 				return Promise.resolve();
+					// 			}
+					// 		},
+					// 	},
+					// ]}
+					initialValue={itemNameEdit}
 				>
-					<Input placeholder="(Nhập tên đăng nhập)" />
+					<Input placeholder={itemNameEdit} disabled />
 				</Form.Item>
 
 				<Form.Item
@@ -98,6 +140,18 @@ const SurfaceUpdateAccount = (props: any) => {
 						{
 							required: true,
 							message: 'Nhập email của bạn',
+						},
+						{
+							validator(reule, value) {
+								const checkEmail = /^[a-zA-Z0-9]+@+[a-zA-Z0-9]+.+[A-z]/;
+								if (value === '' || value === undefined || value === null) {
+									return Promise.reject(new Error('Vui lòng nhập email'));
+								} else if (!checkEmail.test(value)) {
+									return Promise.reject(new Error('Nhập sai định dạng của email. Kiểm tra lại'));
+								} else {
+									return Promise.resolve();
+								}
+							},
 						},
 					]}
 					hasFeedback
