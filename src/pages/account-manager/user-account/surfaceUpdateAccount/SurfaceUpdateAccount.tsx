@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Form, Input, Select, Button, Modal, message } from 'antd';
 import { getAllUsers, putUpdateUser } from '../../../../service/auth/AuthService';
 import { typeUpdateUser } from '../../../../interface/auth/auth.interface';
+import Error, { Success } from '../../../../error/Error';
 import { isThrowStatement } from 'typescript';
 const { Option } = Select;
 const SurfaceUpdateAccount = (props: any) => {
@@ -37,7 +38,7 @@ const SurfaceUpdateAccount = (props: any) => {
 				}
 			});
 		const resultFind = resultsUserName.find((item: any) => item.employee.name === values.staff);
-		console.log('upppppppppppppp', resultFind);
+
 		const params = {
 			id: resultFind.id,
 			email: values.email,
@@ -47,11 +48,11 @@ const SurfaceUpdateAccount = (props: any) => {
 		putUpdateUser(params)
 			.then(res => {
 				console.log('res update', res);
-				message.success('Cập nhật tài khoản người dùng thành công');
+				message.success(Success.updateUser);
 			})
 			.catch(error => {
 				console.log(error);
-				message.error('Cập nhật tài khoản thất bại');
+				message.error(Error.updateUser);
 			});
 	};
 
@@ -145,9 +146,9 @@ const SurfaceUpdateAccount = (props: any) => {
 							validator(reule, value) {
 								const checkEmail = /^[a-zA-Z0-9]+@+[a-zA-Z0-9]+.+[A-z]/;
 								if (value === '' || value === undefined || value === null) {
-									return Promise.reject(new Error('Vui lòng nhập email'));
+									return Promise.reject(Error.emailUser);
 								} else if (!checkEmail.test(value)) {
-									return Promise.reject(new Error('Nhập sai định dạng của email. Kiểm tra lại'));
+									return Promise.reject(Error.configEmailUser);
 								} else {
 									return Promise.resolve();
 								}

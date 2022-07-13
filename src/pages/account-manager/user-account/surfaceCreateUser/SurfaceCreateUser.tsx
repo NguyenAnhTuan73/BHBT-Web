@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Input, Select, Button, Modal, message } from 'antd';
 import { getAllUsers, postNewsUser } from '../../../../service/auth/AuthService';
+import Error, { Success } from '../../../../error/Error';
 const { Option } = Select;
 const PopUp = ({ isModalVisible, handleOk, handleCancel }: any) => {
 	const [form] = Form.useForm();
@@ -43,10 +44,10 @@ const PopUp = ({ isModalVisible, handleOk, handleCancel }: any) => {
 		};
 		postNewsUser(params)
 			.then(res => {
-				message.success('Tạo tài khoản mới thành công');
+				message.success(Success.newUser);
 			})
 			.catch(error => {
-				message.error('Tạo tài khoản thất bại');
+				message.error(Error.newUser);
 			});
 	};
 	const onFinishFailed = (errorInfo: any) => {
@@ -98,7 +99,7 @@ const PopUp = ({ isModalVisible, handleOk, handleCancel }: any) => {
 					name="username"
 					label={
 						<label className="font-semibold">
-							Tên đăng nhập <span className="text-[#FF0000]">(*)</span>
+							Tên đăng nhập <span className="text-red">(*)</span>
 						</label>
 					}
 					rules={[
@@ -106,9 +107,9 @@ const PopUp = ({ isModalVisible, handleOk, handleCancel }: any) => {
 							validator(rule, value) {
 								const checkLogin = /^[A-Za-z0-9 ]+$/;
 								if (value === '' || value === undefined || value === null) {
-									return Promise.reject(new Error('Vui lòng nhập tên đăng nhập'));
+									return Promise.reject(Error.userLogin);
 								} else if (!checkLogin.test(value)) {
-									return Promise.reject(new Error('Chỉ nhập được sô và chữ'));
+									return Promise.reject(Error.rulesUser);
 								} else {
 									return Promise.resolve();
 								}
@@ -125,11 +126,11 @@ const PopUp = ({ isModalVisible, handleOk, handleCancel }: any) => {
 					rules={[
 						{
 							type: 'email',
-							message: 'Nhập đúng định dạng email',
+							message: Error.configEmailUser,
 						},
 						{
 							required: true,
-							message: 'Nhập email của bạn',
+							message: Error.emailUser,
 						},
 					]}
 					hasFeedback
@@ -139,17 +140,16 @@ const PopUp = ({ isModalVisible, handleOk, handleCancel }: any) => {
 				<Form.Item
 					label={
 						<label className="font-semibold">
-							Mật khẩu <span className="text-[#FF0000]">(*)</span>
+							Mật khẩu <span className="text-red">(*)</span>
 						</label>
 					}
 					name="password"
 					rules={[
 						{ required: true, message: 'Nhập mật khẩu' },
-						{ min: 8, message: 'Mật khẩu tối thiểu có 8 ký tự' },
+						{ min: 8, message: Error.limitCharater },
 						{ whitespace: true },
 						{
-							validator: (_, value) =>
-								value ? Promise.resolve() : Promise.reject('Password does not match criteria.'),
+							validator: (_, value) => (value ? Promise.resolve() : Promise.reject(Error.match)),
 						},
 					]}
 					hasFeedback
@@ -159,19 +159,19 @@ const PopUp = ({ isModalVisible, handleOk, handleCancel }: any) => {
 				<Form.Item
 					label={
 						<label className="font-semibold">
-							Nhập lại mật khẩu <span className="text-[#FF0000]">(*)</span>
+							Nhập lại mật khẩu <span className="text-red">(*)</span>
 						</label>
 					}
 					name="confirmpassword"
 					dependencies={['password']}
 					rules={[
-						{ required: true, message: 'Vui lòng xác nhập lại mật khẩu' },
+						{ required: true, message: Error.confirmPasswordUser },
 						({ getFieldValue }) => ({
 							validator(_, value) {
 								if (!value || getFieldValue('password') === value) {
 									return Promise.resolve();
 								}
-								return Promise.reject('Mật khẩu hoặc mật khẩu xác nhận không đúng');
+								return Promise.reject(Error.confirmNewPassword);
 							},
 						}),
 					]}
@@ -184,7 +184,7 @@ const PopUp = ({ isModalVisible, handleOk, handleCancel }: any) => {
 					name="userrole"
 					label={
 						<label className="font-semibold">
-							Vai trò người dùng <span className="text-[#FF0000]">(*)</span>
+							Vai trò người dùng <span className="text-red">(*)</span>
 						</label>
 					}
 				>
@@ -203,7 +203,7 @@ const PopUp = ({ isModalVisible, handleOk, handleCancel }: any) => {
 						<Button
 							// htmlType="submit"
 							onClick={handleCancel}
-							className="px-3 py-1 border-[1px] text-[#008080] border-[#008080] mr-2 rounded-lg"
+							className="px-3 py-1 border-[1px] text-main border-main mr-2 rounded-lg"
 						>
 							Huỷ thao tác
 						</Button>
@@ -212,7 +212,7 @@ const PopUp = ({ isModalVisible, handleOk, handleCancel }: any) => {
 							style={{ backgroundColor: '#008080' }}
 							type="primary"
 							htmlType="submit"
-							className=" border-[1px]  bg-[#008080] border-[#008080] rounded-lg"
+							className=" border-[1px]  bg-main border-main rounded-lg"
 						>
 							Lưu thông tin
 						</Button>

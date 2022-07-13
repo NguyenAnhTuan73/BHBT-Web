@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Select, Table, Modal, Space, Switch } from 'antd';
+import { Input, Select, Table, Space, Switch } from 'antd';
 
-import { SearchOutlined, EditOutlined, ConsoleSqlOutlined, KeyOutlined } from '@ant-design/icons';
-import { getListAllStaff, getAllUsers } from '../../../service/auth/AuthService';
-import { iteratorSymbol } from 'immer/dist/internal';
+import { SearchOutlined, EditOutlined, KeyOutlined } from '@ant-design/icons';
+import { getAllUsers } from '../../../service/auth/AuthService';
+
 import SurfaceCreateUser from './surfaceCreateUser/SurfaceCreateUser';
 import SurfaceUpdateAccount from './surfaceUpdateAccount/SurfaceUpdateAccount';
 import SurfaceCreatePassword from './surfaceCreatePassword/SurfaceCreatePassword';
-import SurfaceEnable from './surfaceChangeActivity/SurfaceEnable';
-import SurfaceDisable from './surfaceChangeActivity/SurfaceDisable';
+
+import SurfaceChangeStatus from './surfaceChangeActivity/SurfaceChangeStatus';
+import { stringify } from 'querystring';
 
 const { Option } = Select;
 const UserAccount = () => {
@@ -24,10 +25,28 @@ const UserAccount = () => {
 	const [isModalUpdateVisible, setIsModalUpdateVisible] = useState(false);
 	const [isModalCreatePwVisible, setIsModalCreatePwVisible] = useState(false);
 	// const [isModalEnable, setIsModalEnable] = useState(false);
-	const [isModalDisable, setIsModalDisable] = useState(false);
+	const [IsModalChangeActivity, setIsModalChangeActivity] = useState(false);
 	const [itemId, setItemId] = useState('');
-	const [checked, setCheked] = useState(true);
 
+	const [currentStatusItem, setCurrenStatustItem] = useState('');
+	// SEARCH USER
+	const [value, setValue] = useState('');
+
+	const [tableFilter, setTableFilter] = useState([]);
+
+	const filterData = (e: any) => {
+		if (e.target.value !== '') {
+			setValue(e.target.value);
+			const filterTable = listAllUsers.filter((i: any) =>
+				Object.keys(i).some((key: any) => String(i[key]).toLowerCase().includes(e.target.value.toLowerCase())),
+			);
+			setTableFilter([...filterTable]);
+		} else {
+			setValue(e.target.value);
+			setListAllUser([...listAllUsers]);
+		}
+	};
+	// SEARCH USER
 	const showModal = () => {
 		setIsModalVisible(true);
 	};
@@ -50,7 +69,7 @@ const UserAccount = () => {
 		setIsModalUpdateVisible(false);
 	};
 	const handleClickEdit = (params: any) => {
-		setItemNameEdit(params.ten_dang_nhap);
+		setItemNameEdit(params.login);
 		showModalUpdate();
 	};
 	// MODAL NEW CREATE PASSWORD
@@ -65,7 +84,7 @@ const UserAccount = () => {
 		setIsModalCreatePwVisible(false);
 	};
 	const handleClickCreatePw = (params: any) => {
-		setCreatePw(params.ten_dang_nhap);
+		setCreatePw(params.login);
 		showModalCreatePw();
 	};
 	useEffect(() => {
@@ -87,18 +106,18 @@ const UserAccount = () => {
 	});
 
 	const columns = [
-		{ title: 'STT', dataIndex: 'stt' },
-		{ title: 'Tên đăng nhập', dataIndex: 'ten_dang_nhap' },
-		{ title: 'Nhân viên', dataIndex: 'nhan_vien' },
+		{ title: 'STT', dataIndex: 'no' },
+		{ title: 'Tên đăng nhập', dataIndex: 'login' },
+		{ title: 'Nhân viên', dataIndex: 'staff' },
 		{ title: 'Email', dataIndex: 'email' },
-		{ title: 'Vai trò người dùng', dataIndex: 'vai_tro_nguoi_dung' },
+		{ title: 'Vai trò người dùng', dataIndex: 'userrole' },
 		{
 			title: 'Trạng thái',
-			dataIndex: 'trang_thai',
+			dataIndex: 'status',
 		},
 		{
 			title: 'Thao tác',
-			dataIndex: 'thao_tac',
+			dataIndex: 'action',
 			render: (_: any, record: any) => (
 				<Space size="middle">
 					<EditOutlined
@@ -115,52 +134,86 @@ const UserAccount = () => {
 			),
 		},
 	];
-	const dataListAllUser = listAllUsers.map((item: any, i: number) => {
-		return {
-			stt: i + 1,
-			ten_dang_nhap: item.username,
-			nhan_vien: item.employee?.name,
-			email: item.email,
-			vai_tro_nguoi_dung: item.userGroup.name,
-			trang_thai: <Switch checked={true} onClick={() => handleClickActivity(item.id)} />,
-			thao_tac: (
-				<>
-					<EditOutlined style={{ color: ' red', marginRight: '10px', cursor: 'pointer' }} />
-					<KeyOutlined style={{ cursor: 'pointer' }} />
-				</>
-			),
-		};
-	});
-	// MODAL SURFACE DISABLE AND ENABLE
-	const showModalDisable = () => {
-		setIsModalDisable(true);
-	};
-	const handleDisableOk = () => {
-		setIsModalDisable(false);
-		// setIsChangeActivity(false);
+	const dataListAllUser =
+		value.length > 0
+			? tableFilter.map((item: any, i: number) => {
+					return {
+						no: i + 1,
+						login: item.username,
+						staff: item.employee?.name,
+						email: item.email,
+						userrole: item.userGroup.name,
+						status: (
+							<Switch
+								checked={item.status.value === 'Active' ? true : false}
+								onClick={() => hadleClickChangeActivity(item.id, item.status.value)}
+							/>
+						),
+
+						action: (
+							<>
+								<EditOutlined style={{ color: ' red', marginRight: '10px', cursor: 'pointer' }} />
+								<KeyOutlined style={{ cursor: 'pointer' }} />
+							</>
+						),
+					};
+			  })
+			: listAllUsers.map((item: any, i: number) => {
+					return {
+						no: i + 1,
+						login: item.username,
+						staff: item.employee?.name,
+						email: item.email,
+						userrole: item.userGroup.name,
+						status: (
+							<Switch
+								checked={item.status.value === 'Active' ? true : false}
+								onClick={() => hadleClickChangeActivity(item.id, item.status.value)}
+							/>
+						),
+
+						action: (
+							<>
+								<EditOutlined style={{ color: ' red', marginRight: '10px', cursor: 'pointer' }} />
+								<KeyOutlined style={{ cursor: 'pointer' }} />
+							</>
+						),
+					};
+			  });
+
+	//
+
+	// MODAL SURFACE ChangeActivity AND ENABLE
+	const showModalChangeActivity = () => {
+		setIsModalChangeActivity(true);
 	};
 
-	const handleDisableCancel = () => {
-		setIsModalDisable(false);
+	const handleChangeActivityOk = () => {
+		setIsModalChangeActivity(false);
 	};
 
-	// const onChange = (checked: boolean) => {
-	// 	setIsChangeActivity(checked);
-	// 	if (checked === false) {
-	// 	}
-	// 	console.log(`switch to ${checked}`);
-	// };
-	const handleClickActivity = (id: any) => {
-		showModalDisable();
+	const handleChangeActivityCancel = () => {
+		setIsModalChangeActivity(false);
+	};
+
+	const hadleClickChangeActivity = (id: string, data: string) => {
+		showModalChangeActivity();
 		setItemId(id);
-		console.log('hello', id);
+		setCurrenStatustItem(data);
 	};
+
 	return (
 		<div className="h-full">
 			<div className="h-full">
 				<div className="flex items-center justify-between mb-4">
 					<div className="w-1/2 ">
-						<Input className="h-[30px] flex flex-row-reverse" prefix={<SearchOutlined />} />
+						<Input
+							placeholder="Tìm theo tên đăng nhập, email, (nhân viên)..."
+							className="h-[30px] flex flex-row-reverse"
+							prefix={<SearchOutlined />}
+							value={value}
+							onChange={e => filterData(e)}
+						/>
 					</div>
 					<button onClick={showModal} className="bg-[#354A5F] px-8 py-2 text-white font-semibold rounded-lg">
 						Thêm mới
@@ -216,12 +269,13 @@ const UserAccount = () => {
 							listAllUsers={listAllUsers}
 							createPw={createPw}
 						/>
-						<SurfaceDisable
-							isModalDisable={isModalDisable}
-							showModalDisable={showModalDisable}
-							handleDisableOk={handleDisableOk}
-							handleDisableCancel={handleDisableCancel}
+						<SurfaceChangeStatus
+							IsModalChangeActivity={IsModalChangeActivity}
+							showModalChangeActivity={showModalChangeActivity}
+							handleChangeActivityOk={handleChangeActivityOk}
+							handleChangeActivityCancel={handleChangeActivityCancel}
 							itemId={itemId}
+							currentStatusItem={currentStatusItem}
 						/>
 					</div>
 				</div>

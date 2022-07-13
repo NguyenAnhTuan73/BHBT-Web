@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Checkbox, Form, Input, message } from 'antd';
-
+import Error, { Success } from '../../error/Error';
 import { MailOutlined, LockOutlined } from '@ant-design/icons';
 import { setAccessToken, setUserAndPasswordLocal } from '../../helper/tokenHelper';
 import { userLogin } from '../../service/auth/AuthService';
@@ -37,7 +37,7 @@ const Login = () => {
 
 		userLogin(params)
 			.then(res => {
-				message.success('Đăng nhập thành công');
+				message.success(Success.login);
 				setAccessToken(res.data.data.accessToken);
 
 				navigate('/main');
@@ -46,7 +46,7 @@ const Login = () => {
 			})
 			.catch(error => {
 				if (error.code === 'ERR_BAD_REQUEST') {
-					message.error('Tài khoản hoặc mật khẩu không đúng');
+					message.error(Error.login);
 				}
 				console.log('error', error);
 			});
@@ -86,7 +86,7 @@ const Login = () => {
 												rules={[
 													{
 														required: true,
-														message: 'Vui lòng đăng nhập tài khoản!',
+														message: Error.loginAccount,
 													},
 												]}
 											>
@@ -102,7 +102,7 @@ const Login = () => {
 												rules={[
 													{
 														required: true,
-														message: 'Vui lòng đăng nhập mật khẩu!',
+														message: Error.loginPassword,
 													},
 												]}
 												className="mb-[2rem] w-[80%]"

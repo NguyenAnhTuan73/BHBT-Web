@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Input, Select, Button, Modal, message } from 'antd';
 import { putResetPasswordUser } from '../../../../service/auth/AuthService';
+import Error, { Success } from '../../../../error/Error';
 
 const SurfaceCreatePassword = (props: any) => {
 	const {
@@ -49,11 +50,11 @@ const SurfaceCreatePassword = (props: any) => {
 			.then(res => {
 				console.log('res pword', res);
 				setNewPassword(res.data.data.password);
-				message.success('Cập nhật mới mật khẩu người dùng thành công');
+				message.success(Success.resetPassword);
 			})
 			.catch(error => {
 				console.log(error);
-				message.error('Cập nhật mật khẩu thất bại');
+				message.error(Error.resetPassword);
 			});
 	};
 	return (
@@ -82,7 +83,7 @@ const SurfaceCreatePassword = (props: any) => {
 						<Button
 							// htmlType="submit"
 							onClick={handleCreatePwCancel}
-							className="px-3 py-1 border-[1px] text-[#008080] border-[#008080] mr-2 rounded-lg"
+							className="px-3 py-1 border-[1px] text-main border-main mr-2 rounded-lg"
 						>
 							Không
 						</Button>
@@ -90,7 +91,7 @@ const SurfaceCreatePassword = (props: any) => {
 							style={{ backgroundColor: '#008080' }}
 							type="primary"
 							htmlType="submit"
-							className=" border-[1px]  bg-[#008080] border-[#008080] rounded-lg"
+							className=" border-[1px]  bg-main border-main rounded-lg"
 							onClick={handleContinute}
 						>
 							Đồng ý
@@ -130,7 +131,7 @@ const SurfaceCreatePassword = (props: any) => {
 						<Button
 							// htmlType="submit"
 							onClick={handleCreatePwCCancel}
-							className="px-3 py-1 border-[1px] text-[#008080] border-[#008080] mr-2 rounded-lg"
+							className="px-3 py-1 border-[1px] text-main border-main mr-2 rounded-lg"
 						>
 							Đóng
 						</Button>
@@ -138,7 +139,7 @@ const SurfaceCreatePassword = (props: any) => {
 							style={{ backgroundColor: '#008080' }}
 							type="primary"
 							htmlType="submit"
-							className=" border-[1px]  bg-[#008080] border-[#008080] rounded-lg"
+							className=" border-[1px]  bg-main border-main rounded-lg"
 						>
 							Sao chép
 						</Button>

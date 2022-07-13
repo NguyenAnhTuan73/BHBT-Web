@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Form, Input, Select, Button, Modal, message } from 'antd';
 import { putChangeActivity } from '../../../../service/auth/AuthService';
 
-const SurfaceDisable = (props: any) => {
-	const { isModalDisable, showModalDisable, handleDisableOk, handleDisableCancel, itemId } = props;
-	console.log('id:', itemId);
+const SurfaceChangeActivity = (props: any) => {
+	const { IsModalChangeActivity, handleChangeActivityOk, handleChangeActivityCancel, itemId, currentStatusItem } =
+		props;
+
 	const onFinish = (values: any) => {
 		// const result = usersNameDisable.filter((item: any) => {
 		// 	return item.username === itemName;
@@ -27,11 +28,16 @@ const SurfaceDisable = (props: any) => {
 		<Modal
 			closable={false}
 			footer={null}
-			visible={isModalDisable}
-			onOk={handleDisableOk}
-			onCancel={handleDisableCancel}
+			visible={IsModalChangeActivity}
+			onOk={handleChangeActivityOk}
+			onCancel={handleChangeActivityCancel}
 		>
-			<h1>XÁC NHẬN VÔ HIỆU HOÁ TÀI KHOẢN NGƯỜI DÙNG</h1>
+			{currentStatusItem === 'Active' ? (
+				<h1>XÁC NHẬN VÔ HIỆU HOÁ TÀI KHOẢN NGƯỜI DÙNG</h1>
+			) : (
+				<h1>XÁC NHẬN KÍCH HOẠT TÀI KHOẢN NGƯỜI DÙNG</h1>
+			)}
+
 			<Form
 				name="basic"
 				labelCol={{ span: 8 }}
@@ -47,17 +53,17 @@ const SurfaceDisable = (props: any) => {
 				<div className=" w-full text-right ">
 					<Button
 						// htmlType="submit"
-						onClick={handleDisableCancel}
-						className="px-3 py-1 border-[1px] text-[#008080] border-[#008080] mr-2 rounded-lg"
+						onClick={handleChangeActivityCancel}
+						className="px-3 py-1 border-[1px] text-main border-main mr-2 rounded-lg"
 					>
 						Không
 					</Button>
 					<Button
-						onClick={handleDisableOk}
+						onClick={handleChangeActivityOk}
 						style={{ backgroundColor: '#008080' }}
 						type="primary"
 						htmlType="submit"
-						className=" border-[1px]  bg-[#008080] border-[#008080] rounded-lg"
+						className=" border-[1px]  bg-main border-main rounded-lg"
 					>
 						Đồng ý
 					</Button>
@@ -67,4 +73,4 @@ const SurfaceDisable = (props: any) => {
 	);
 };
 
-export default SurfaceDisable;
+export default SurfaceChangeActivity;
