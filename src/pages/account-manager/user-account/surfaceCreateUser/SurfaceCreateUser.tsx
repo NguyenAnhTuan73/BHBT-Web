@@ -145,7 +145,7 @@ const PopUp = ({ isModalVisible, handleOk, handleCancel }: any) => {
 					}
 					name="password"
 					rules={[
-						{ required: true, message: 'Nhập mật khẩu' },
+						{ required: true, message: Error.passwordAccount },
 						{ min: 8, message: Error.limitCharater },
 						{ whitespace: true },
 						{

@@ -22,6 +22,7 @@ const Error = {
 	confirmPasswordUser: 'Vui lòng xác nhận lại mật khẩu',
 	// UPDATE ACCOUNT
 	updateUser: 'Cập nhật tài khoản thất bại',
+	passwordAccount: 'Nhập mật khẩu',
 };
 export const Success = {
 	login: 'Đăng nhập thành công',

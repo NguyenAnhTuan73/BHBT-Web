@@ -136,11 +136,11 @@ const SurfaceUpdateAccount = (props: any) => {
 					rules={[
 						{
 							type: 'email',
-							message: 'Nhập đúng định dạng email',
+							message: Error.configEmailUser,
 						},
 						{
 							required: true,
-							message: 'Nhập email của bạn',
+							message: Error.emailUser,
 						},
 						{
 							validator(reule, value) {
