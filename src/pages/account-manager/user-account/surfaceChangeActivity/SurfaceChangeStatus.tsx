@@ -5,7 +5,7 @@ import { putChangeActivity } from '../../../../service/auth/AuthService';
 const SurfaceChangeStatus = (props: any) => {
 	const { IsModalChangeActivity, handleChangeActivityOk, handleChangeActivityCancel, itemId, currentStatusItem } =
 		props;
-	console.log('id:', itemId);
+
 	const onFinish = (values: any) => {
 		// const result = usersNameDisable.filter((item: any) => {
 		// 	return item.username === itemName;

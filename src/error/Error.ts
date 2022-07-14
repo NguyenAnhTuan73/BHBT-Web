@@ -4,6 +4,7 @@ const Error = {
 	login: 'Tài khoản hoặc mật khẩu không đúng',
 	loginAccount: 'Vui lòng đăng nhập tài khoản!',
 	loginPassword: 'Vui lòng đăng nhập mật khẩu!',
+
 	changePassword: 'Thay đổi mật khẩu thất bại',
 	updateInfor: 'Vui lòng cập nhật thông tin này',
 	currentPassword: 'Nhập mật khẩu hiện tại',

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Input, Select, Button, Modal, message } from 'antd';
 import { getAllUsers, putUpdateUser } from '../../../../service/auth/AuthService';
-import { typeUpdateUser } from '../../../../interface/auth/auth.interface';
+
 import Error, { Success } from '../../../../error/Error';
 import { isThrowStatement } from 'typescript';
 const { Option } = Select;
@@ -19,8 +19,8 @@ const SurfaceUpdateAccount = (props: any) => {
 			});
 	}, []);
 
-	const popUpNameRole = dataAllUser.map((item: any, index: number) => {
-		return item.userGroup.name;
+	const popUpNameRole = dataAllUser.map((userItem: any, i: number) => {
+		return userItem.userGroup.name;
 	});
 	// uptade user account
 	const usersName = dataAllUser.map((item: any, index: number) => {
@@ -28,13 +28,14 @@ const SurfaceUpdateAccount = (props: any) => {
 	});
 
 	const onFinish = (values: any) => {
+		console.log('value', values);
 		const resultsUserName = dataAllUser
 			.filter((item: any) => {
-				return item.status.displayText === 'Đang hoạt động';
+				return item.status.value === 'Active';
 			})
-			.map((item: any, index: number) => {
-				if (item.employee !== null && item.userGroup !== null) {
-					return item;
+			.map((itemValue: any, index: number) => {
+				if (itemValue.employee !== null && itemValue.userGroup !== null) {
+					return itemValue;
 				}
 			});
 		const resultFind = resultsUserName.find((item: any) => item.employee.name === values.staff);

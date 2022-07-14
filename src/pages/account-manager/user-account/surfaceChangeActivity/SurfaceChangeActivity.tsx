@@ -1,10 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Input, Select, Button, Modal, message } from 'antd';
+
 import { putChangeActivity } from '../../../../service/auth/AuthService';
 
 const SurfaceChangeActivity = (props: any) => {
-	const { IsModalChangeActivity, handleChangeActivityOk, handleChangeActivityCancel, itemId, currentStatusItem } =
-		props;
+	const {
+		IsModalChangeActivity,
+		handleChangeActivityOk,
+		handleChangeActivityCancel,
+		itemId,
+		currentStatusItem,
+		handleClickChangeSwitch,
+	} = props;
 
 	const onFinish = (values: any) => {
 		// const result = usersNameDisable.filter((item: any) => {
@@ -32,11 +39,11 @@ const SurfaceChangeActivity = (props: any) => {
 			onOk={handleChangeActivityOk}
 			onCancel={handleChangeActivityCancel}
 		>
-			{currentStatusItem === 'Active' ? (
-				<h1>XÁC NHẬN VÔ HIỆU HOÁ TÀI KHOẢN NGƯỜI DÙNG</h1>
-			) : (
-				<h1>XÁC NHẬN KÍCH HOẠT TÀI KHOẢN NGƯỜI DÙNG</h1>
-			)}
+			<h1>
+				{currentStatusItem === 'Active'
+					? 'XÁC NHẬN VÔ HIỆU HOÁ TÀI KHOẢN NGƯỜI DÙNG'
+					: 'XÁC NHẬN KÍCH HOẠT TÀI KHOẢN NGƯỜI DÙNG'}
+			</h1>
 
 			<Form
 				name="basic"

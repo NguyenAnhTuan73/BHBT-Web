@@ -36,7 +36,7 @@ const PopUp = ({ isModalVisible, handleOk, handleCancel }: any) => {
 		const resultFind = result.find((item: any) => item.employee.name === values.staff);
 
 		const params = {
-			username: values.username,
+			userName: values.username,
 			password: values.password,
 			email: values.email,
 			employeeId: resultFind.employee.id,
@@ -57,7 +57,7 @@ const PopUp = ({ isModalVisible, handleOk, handleCancel }: any) => {
 	if (!isModalVisible) {
 		form.setFieldsValue({
 			staff: '',
-			username: '',
+			userName: '',
 			email: '',
 			password: '',
 			confirmpassword: '',
@@ -188,7 +188,7 @@ const PopUp = ({ isModalVisible, handleOk, handleCancel }: any) => {
 						</label>
 					}
 				>
-					<Select placeholder="-Chọn nhóm người dùng-">
+					<Select defaultValue="-Chọn nhóm người dùng-">
 						{popUpNameRole
 							.filter((item: any, i: number) => popUpNameRole.indexOf(item) === i)
 							.map((item: any, inx) => (
