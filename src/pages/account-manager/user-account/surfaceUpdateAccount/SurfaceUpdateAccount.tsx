@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Input, Select, Button, Modal, message } from 'antd';
-import { getAllUsers } from '../../../../service/auth/AuthService';
+import { getAllUsers, putUpdateUser } from '../../../../service/auth/AuthService';
+
+import Error, { Success } from '../../../../error/Error';
+import { isThrowStatement } from 'typescript';
+import { USER_STATUS } from '../../../../core/enums/user.enum';
 const { Option } = Select;
 const SurfaceUpdateAccount = (props: any) => {
-	const { isModalUpdateVisible, handleUpdateOk, handleUpdateCancel } = props;
+	const [formEdit] = Form.useForm();
+	const { isModalUpdateVisible, handleUpdateOk, handleUpdateCancel, userNameHyberLink } = props;
+
 	const [dataAllUser, setDataAllUser] = useState([]);
 	useEffect(() => {
 		getAllUsers()
 			.then(res => {
-				console.log('respopup', res);
 				setDataAllUser(res.data.data);
 			})
 			.catch(error => {
@@ -16,16 +21,55 @@ const SurfaceUpdateAccount = (props: any) => {
 			});
 	}, []);
 
-	const popUpNameRole = dataAllUser.map((item: any, index: number) => {
-		return item.userGroup.name;
+	const popUpNameRole = dataAllUser.map((userItem: any, i: number) => {
+		return userItem.userGroup.name;
+	});
+	// uptade user account
+	const usersName = dataAllUser.map((item: any, index: number) => {
+		return item.username;
 	});
 
 	const onFinish = (values: any) => {
-		console.log('data info', values);
+		console.log('value', values);
+		const resultsUserName = dataAllUser
+			.filter((item: any) => {
+				return item.status.value === USER_STATUS.ACTIVE;
+			})
+			.map((itemValue: any, index: number) => {
+				if (itemValue.employee !== null && itemValue.userGroup !== null) {
+					return itemValue;
+				}
+			});
+		const resultFind = resultsUserName.find((item: any) => item.employee.name === values.staff);
+
+		const params = {
+			id: resultFind.id,
+			email: values.email,
+			employeeId: resultFind.employee.id,
+			userGroupId: resultFind.userGroup.id,
+		};
+		putUpdateUser(params)
+			.then(res => {
+				console.log('res update', res);
+				message.success(Success.updateUser);
+			})
+			.catch(error => {
+				console.log(error);
+				message.error(Error.updateUser);
+			});
 	};
+
 	const onFinishFailed = (errorInfo: any) => {
 		console.log('Failed:', errorInfo);
 	};
+	if (!isModalUpdateVisible) {
+		formEdit.setFieldsValue({
+			staff: '',
+			login: '',
+			email: '',
+			userrole: '',
+		});
+	}
 
 	return (
 		<Modal
@@ -37,6 +81,7 @@ const SurfaceUpdateAccount = (props: any) => {
 		>
 			<h1>CẬP NHẬT TÀI KHOẢN NGƯỜI DÙNG</h1>
 			<Form
+				form={formEdit}
 				name="basic"
 				labelCol={{ span: 8 }}
 				wrapperCol={{ span: 16 }}
@@ -63,28 +108,14 @@ const SurfaceUpdateAccount = (props: any) => {
 					</Select>
 				</Form.Item>
 				<Form.Item
-					name="username"
+					name="login"
 					label={
 						<label className="font-semibold">
 							Tên đăng nhập <span className="text-[#FF0000]">(*)</span>
 						</label>
 					}
-					rules={[
-						{
-							validator(rule, value) {
-								const checkLogin = /^[A-Za-z0-9 ]+$/;
-								if (value === '' || value === undefined || value === null) {
-									return Promise.reject(new Error('Vui lòng nhập tên đăng nhập'));
-								} else if (!checkLogin.test(value)) {
-									return Promise.reject(new Error('Chỉ nhập được sô và chữ'));
-								} else {
-									return Promise.resolve();
-								}
-							},
-						},
-					]}
 				>
-					<Input placeholder="(Nhập tên đăng nhập)" />
+					<Input placeholder={userNameHyberLink} disabled />
 				</Form.Item>
 
 				<Form.Item
@@ -93,11 +124,23 @@ const SurfaceUpdateAccount = (props: any) => {
 					rules={[
 						{
 							type: 'email',
-							message: 'Nhập đúng định dạng email',
+							message: Error.configEmailUser,
 						},
 						{
 							required: true,
-							message: 'Nhập email của bạn',
+							message: Error.emailUser,
+						},
+						{
+							validator(reule, value) {
+								const checkEmail = /^[a-zA-Z0-9]+@+[a-zA-Z0-9]+.+[A-z]/;
+								if (value === '' || value === undefined || value === null) {
+									return Promise.reject(Error.emailUser);
+								} else if (!checkEmail.test(value)) {
+									return Promise.reject(Error.configEmailUser);
+								} else {
+									return Promise.resolve();
+								}
+							},
 						},
 					]}
 					hasFeedback

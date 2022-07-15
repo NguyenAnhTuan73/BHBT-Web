@@ -2,6 +2,7 @@ import React from 'react';
 import { Form, Input, Button, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { userChangePassword } from '../../../service/auth/AuthService';
+import Error, { Success } from '../../../error/Error';
 import CryptoJS from 'crypto-js';
 const ChangePassword = () => {
 	const navigate = useNavigate();
@@ -26,12 +27,12 @@ const ChangePassword = () => {
 		userChangePassword(params)
 			.then((res: any) => {
 				console.log('sussec', res);
-				message.success('Thay đổi mật khẩu thành công');
+				message.success(Success.changePassword);
 				navigate('/main');
 			})
 			.catch(error => {
 				console.log('loi roi', error);
-				message.error('Thay đổi mật khẩu không thành công');
+				message.error(Error.changePassword);
 			});
 	};
 
@@ -47,7 +48,7 @@ const ChangePassword = () => {
 				// }}
 				onFinish={onFinish}
 				onFinishFailed={error => {
-					message.error('Vui lòng cập nhật thông tin này');
+					message.error(Error.updateInfor);
 				}}
 			>
 				<div className="flex justify-between items-center">
@@ -67,7 +68,7 @@ const ChangePassword = () => {
 						rules={[
 							{
 								required: true,
-								message: 'Nhập mật khẩu hiện tại',
+								message: Error.currentPassword,
 							},
 							({ getFieldValue }) => ({
 								validator(_, value) {
@@ -87,15 +88,12 @@ const ChangePassword = () => {
 						rules={[
 							{
 								required: true,
-								message: 'Nhập mật khẩu mới',
+								message: Error.newPassword,
 							},
-							{ min: 8, message: 'Mật khẩu tối thiểu 8 ký tự' },
+							{ min: 8, message: Error.limitCharater },
 							{ whitespace: true },
 							{
-								validator: (_, value) =>
-									value && value.includes('A')
-										? Promise.resolve()
-										: Promise.reject('Password does not match criteria.'),
+								validator: (_, value) => (value ? Promise.resolve() : Promise.reject(Error.match)),
 							},
 						]}
 					>
@@ -108,7 +106,7 @@ const ChangePassword = () => {
 						rules={[
 							{
 								required: true,
-								message: '(Vui lòng cập nhập thông tin này)',
+								message: Error.updateInfor,
 							},
 
 							({ getFieldValue }) => ({
@@ -116,7 +114,7 @@ const ChangePassword = () => {
 									if (!value || getFieldValue('newPassword') === value) {
 										return Promise.resolve();
 									}
-									return Promise.reject('Mật khẩu hoặc mật khẩu xác nhận không đúng');
+									return Promise.reject(Error.confirmNewPassword);
 								},
 							}),
 						]}
