@@ -10,14 +10,15 @@ import {
 	getListFunctionUser,
 	putChangeActivity,
 } from '../../../service/auth/AuthService';
-
+import { TypeDataUser } from '../../../interface/auth/auth.interface';
 import SurfaceCreateUser from './surfaceCreateUser/SurfaceCreateUser';
 import SurfaceUpdateAccount from './surfaceUpdateAccount/SurfaceUpdateAccount';
 import SurfaceCreatePassword from './surfaceCreatePassword/SurfaceCreatePassword';
-
 import SurfaceChangeStatus from './surfaceChangeActivity/SurfaceChangeStatus';
 
+import { USER_STATUS } from '../../../core/enums/user.enum';
 const { Option } = Select;
+
 const UserAccount = () => {
 	const [sortActive, setSortActive] = useState('');
 	const [numberPage, setNumberPage] = useState<number>(0);
@@ -27,12 +28,14 @@ const UserAccount = () => {
 	const typingTimeoutRef = useRef(null);
 	const [groupUserID, setGroupUserID] = useState('');
 	const [filterSearch, setFilterSearch] = useState<string>('');
+	const [userNameHyberLink, setUserNameHyberLink] = useState('');
+
 	// data
-	const [dataUser, setDataUser] = useState<any>([]);
+	const [dataUser, setDataUser] = useState<any[]>([]);
 	const [listAllUsers, setListAllUser] = useState<any>([]);
 	const [dataGroups, setDataGroups] = useState<any>([]);
 	const [userGroup, setUserGroup] = useState<any>([]);
-	const [itemNameEdit, setItemNameEdit] = useState('');
+
 	const [createPw, setCreatePw] = useState('');
 	const [loading, setLoading] = useState<boolean>(false);
 	// show modal
@@ -44,7 +47,7 @@ const UserAccount = () => {
 	const [IsModalChangeActivity, setIsModalChangeActivity] = useState(false);
 	const [itemId, setItemId] = useState({});
 
-	const [currentStatusItem, setCurrenStatustItem] = useState('');
+	const [currentStatusItem, setCurrenStatustItem] = useState<boolean>(true);
 	// SEARCH USER
 	const [value, setValue] = useState('');
 	const keys = ['email', 'username', 'employee.name'];
@@ -73,8 +76,10 @@ const UserAccount = () => {
 	const handleUpdateCancel = () => {
 		setIsModalUpdateVisible(false);
 	};
-	const handleClickEdit = (params: any) => {
-		setItemNameEdit(params.login);
+	const handleClickEdit = (record: any) => {
+		console.log('record', record);
+		setUserNameHyberLink(record.login);
+
 		showModalUpdate();
 	};
 	// MODAL NEW CREATE PASSWORD
@@ -110,8 +115,8 @@ const UserAccount = () => {
 			.catch(err => {
 				console.log(err);
 			});
+		console.log('userGroup', userGroup);
 	}, []);
-
 	const userRole = userGroup.map((item: any, i: number) => {
 		return {
 			id: item.id,
@@ -168,7 +173,22 @@ const UserAccount = () => {
 
 	const columns = [
 		{ title: 'STT', dataIndex: 'no' },
-		{ title: 'Tên đăng nhập', dataIndex: 'login' },
+		{
+			title: 'Tên đăng nhập',
+			dataIndex: 'login',
+			render: (_: any, record: any) => (
+				<div
+					onClick={() => {
+						console.log('record', record);
+						setUserNameHyberLink(record.login);
+
+						showModalUpdate();
+					}}
+				>
+					{record.login}
+				</div>
+			),
+		},
 		{ title: 'Nhân viên', dataIndex: 'staff' },
 		{ title: 'Email', dataIndex: 'email' },
 		{ title: 'Vai trò người dùng', dataIndex: 'userrole' },
@@ -197,8 +217,8 @@ const UserAccount = () => {
 			),
 		},
 	];
-
-	const dataListAllUser = dataUser.map((item: any, i: number) => {
+	console.log('dataUser', dataUser);
+	const dataListAllUser = dataUser.map((item: TypeDataUser, i: number) => {
 		return {
 			no: i + 1,
 			login: item.username,
@@ -208,8 +228,12 @@ const UserAccount = () => {
 			status: (
 				<Switch
 					id={item.id}
-					checked={item.status.value === 'Active' ? true : false}
-					onClick={() => hadleClickChangeActivity(item.id, item.status.value)}
+					checked={item.status.value === USER_STATUS.ACTIVE ? true : false}
+					onChange={(checked: boolean, event: any) => {
+						event.preventDefault();
+
+						hadleClickChangeActivity(item.id, checked);
+					}}
 				/>
 			),
 
@@ -232,7 +256,13 @@ const UserAccount = () => {
 	const handleChangeActivityOk = () => {
 		console.log('idid:', itemId);
 		putChangeActivity(itemId);
+		const indexUser = dataUser.findIndex((item: TypeDataUser) => item.id === itemId);
+		console.log('index', indexUser);
+		if (indexUser != -1) {
+			dataUser[indexUser].status.value = currentStatusItem ? USER_STATUS.ACTIVE : USER_STATUS.UNACTIVE;
+		}
 		setIsModalChangeActivity(false);
+		console.log('dataUser', dataUser);
 	};
 	const handleClickChangeSwitch = (item: any) => {
 		console.log('switch', item);
@@ -241,7 +271,7 @@ const UserAccount = () => {
 		setIsModalChangeActivity(false);
 	};
 
-	const hadleClickChangeActivity = (id: string, data: string) => {
+	const hadleClickChangeActivity = (id: string, data: boolean) => {
 		console.log('idSiwtch, ', id);
 		showModalChangeActivity();
 		setItemId(id);
@@ -354,7 +384,7 @@ const UserAccount = () => {
 						showModalUpdate={showModalUpdate}
 						handleUpdateOk={handleUpdateOk}
 						handleUpdateCancel={handleUpdateCancel}
-						itemNameEdit={itemNameEdit}
+						userNameHyberLink={userNameHyberLink}
 					/>
 					<SurfaceCreatePassword
 						isModalCreatePwVisible={isModalCreatePwVisible}

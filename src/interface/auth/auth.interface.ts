@@ -59,3 +59,29 @@ export interface TypeUpdateUser {
 export interface TypeAnyUser {
 	id: string;
 }
+// user
+export interface TypeDataUser {
+	id: string;
+	email: string;
+	employee?: {
+		id: string;
+		no: string;
+		name: string;
+	};
+	status: {
+		key: string;
+		value: string;
+		displayText: string;
+		group: string;
+	};
+	userGroup: { id: string; name: string };
+	username: string;
+}
+// export interface TypeRecord {
+// 	no: number
+// 	login:string
+// 	staff:string
+// 	email: string
+// 	userrole: string
+// 	status:
+// }

@@ -4,10 +4,12 @@ import { getAllUsers, putUpdateUser } from '../../../../service/auth/AuthService
 
 import Error, { Success } from '../../../../error/Error';
 import { isThrowStatement } from 'typescript';
+import { USER_STATUS } from '../../../../core/enums/user.enum';
 const { Option } = Select;
 const SurfaceUpdateAccount = (props: any) => {
 	const [formEdit] = Form.useForm();
-	const { isModalUpdateVisible, handleUpdateOk, handleUpdateCancel, itemNameEdit } = props;
+	const { isModalUpdateVisible, handleUpdateOk, handleUpdateCancel, userNameHyberLink } = props;
+
 	const [dataAllUser, setDataAllUser] = useState([]);
 	useEffect(() => {
 		getAllUsers()
@@ -31,7 +33,7 @@ const SurfaceUpdateAccount = (props: any) => {
 		console.log('value', values);
 		const resultsUserName = dataAllUser
 			.filter((item: any) => {
-				return item.status.value === 'Active';
+				return item.status.value === USER_STATUS.ACTIVE;
 			})
 			.map((itemValue: any, index: number) => {
 				if (itemValue.employee !== null && itemValue.userGroup !== null) {
@@ -112,23 +114,8 @@ const SurfaceUpdateAccount = (props: any) => {
 							Tên đăng nhập <span className="text-[#FF0000]">(*)</span>
 						</label>
 					}
-					// rules={[
-					// 	{
-					// 		validator(rule, value) {
-					// 			const checkLogin = /^[A-Za-z0-9 ]+$/;
-					// 			if (value === '' || value === undefined || value === null) {
-					// 				return Promise.reject(new Error('Vui lòng nhập tên đăng nhập'));
-					// 			} else if (!checkLogin.test(value)) {
-					// 				return Promise.reject(new Error('Chỉ nhập được sô và chữ'));
-					// 			} else {
-					// 				return Promise.resolve();
-					// 			}
-					// 		},
-					// 	},
-					// ]}
-					initialValue={itemNameEdit}
 				>
-					<Input placeholder={itemNameEdit} disabled />
+					<Input placeholder={userNameHyberLink} disabled />
 				</Form.Item>
 
 				<Form.Item
