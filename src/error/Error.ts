@@ -34,6 +34,7 @@ export const Success = {
 	newUser: 'Tạo tài khoản mới thành công',
 	// UPDATE ACCOUNT
 	updateUser: 'Cập nhật tài khoản người dùng thành công',
+	deleteGroupUser: 'Xoá thành công',
 };
 
 export default Error;

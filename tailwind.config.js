@@ -13,6 +13,7 @@ module.exports = {
 			'border-white': '#E6E8EC',
 			main: '#008080',
 			red: '#FF0000',
+			userName: '#46BAF3',
 		}),
 		borderRadius: {
 			none: '0',

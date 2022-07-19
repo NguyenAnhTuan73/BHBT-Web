@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Form, Input, Select, Button, Modal, message } from 'antd';
 import { getAllUsers, postNewsUser } from '../../../../service/auth/AuthService';
 import Error, { Success } from '../../../../error/Error';
+import { USER_STATUS } from '../../../../core/enums/user.enum';
 const { Option } = Select;
 const PopUp = ({ isModalVisible, handleOk, handleCancel }: any) => {
 	const [form] = Form.useForm();
@@ -26,7 +27,7 @@ const PopUp = ({ isModalVisible, handleOk, handleCancel }: any) => {
 
 		const result = popUp
 			.filter((item: any) => {
-				return item.status.displayText === 'Đang hoạt động';
+				return item.status.value === USER_STATUS.ACTIVE;
 			})
 			.map((item: any, i: number) => {
 				if (item.employee !== null) {
@@ -82,7 +83,7 @@ const PopUp = ({ isModalVisible, handleOk, handleCancel }: any) => {
 					<Select placeholder="-Chọn nhân viên-">
 						{popUp.map((item: any, index: number) => {
 							return (
-								<>
+								<div key={index}>
 									{item.employee !== null ? (
 										<Option key={index} value={item?.employee?.name}>
 											{item.employee?.no}-{item?.employee?.name}
@@ -90,7 +91,7 @@ const PopUp = ({ isModalVisible, handleOk, handleCancel }: any) => {
 									) : (
 										''
 									)}
-								</>
+								</div>
 							);
 						})}
 					</Select>

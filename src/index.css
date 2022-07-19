@@ -13,3 +13,9 @@ body {
 code {
 	font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
+
+* {
+	padding: 0;
+	box-sizing: border-box;
+	margin: 0;
+}

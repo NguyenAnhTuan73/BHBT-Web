@@ -1,3 +1,5 @@
+import { StringLiteral } from 'typescript';
+
 export interface AuthInterface {
 	userName: string;
 	password: string;
@@ -77,11 +79,69 @@ export interface TypeDataUser {
 	userGroup: { id: string; name: string };
 	username: string;
 }
-// export interface TypeRecord {
-// 	no: number
-// 	login:string
-// 	staff:string
-// 	email: string
-// 	userrole: string
-// 	status:
-// }
+export interface TypeRecord {
+	no: number;
+	login: string;
+	staff: string;
+	email: string;
+	userrole: string;
+	status: { props: { id: string; checked: boolean } };
+}
+export interface TypeDataGroups {
+	key: string;
+	value: string;
+	displayText: string;
+}
+export interface TypeDataUserRole {
+	id: string;
+	name: string;
+}
+// USER GROUPS ROLE
+
+export interface TypeUserGroups {
+	id: string;
+	name: string;
+	userNumber: number;
+	isAdmin: boolean;
+}
+// user position
+export interface TypePositionGroups {
+	description?: string;
+	id: string;
+	name: string;
+	userNumber: number;
+	isActive: boolean;
+	sortOrder: number;
+}
+// Employee
+
+export interface TypeDataEmployee {
+	id: string;
+	isActive: boolean;
+	name: string;
+	position: {
+		id: string;
+		no: string;
+		name: string;
+	};
+}
+export interface TypeMasterDataFeature {
+	id: string;
+	name: string;
+	description: string;
+	features: [
+		{
+			id: string;
+			name: string;
+			description: string;
+		},
+	];
+}
+export interface TypeConfigText {
+	isFixed: boolean;
+	isNotAllowedEditText: boolean;
+	key: string;
+	value: string;
+	displayText: string;
+	group: StringLiteral;
+}
