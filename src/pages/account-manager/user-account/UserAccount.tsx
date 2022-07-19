@@ -10,7 +10,7 @@ import {
 	getListFunctionUser,
 	putChangeActivity,
 } from '../../../service/auth/AuthService';
-import { TypeDataUser } from '../../../interface/auth/auth.interface';
+import { TypeDataUser, TypeRecord, TypeDataGroups, TypeDataUserRole } from '../../../interface/auth/auth.interface';
 import SurfaceCreateUser from './surfaceCreateUser/SurfaceCreateUser';
 import SurfaceUpdateAccount from './surfaceUpdateAccount/SurfaceUpdateAccount';
 import SurfaceCreatePassword from './surfaceCreatePassword/SurfaceCreatePassword';
@@ -49,9 +49,6 @@ const UserAccount = () => {
 
 	const [currentStatusItem, setCurrenStatustItem] = useState<boolean>(true);
 	// SEARCH USER
-	const [value, setValue] = useState('');
-	const keys = ['email', 'username', 'employee.name'];
-	const [tableFilter, setTableFilter] = useState([]);
 
 	// Swithch
 	const [status, setStatus] = useState<boolean>(true);
@@ -76,8 +73,7 @@ const UserAccount = () => {
 	const handleUpdateCancel = () => {
 		setIsModalUpdateVisible(false);
 	};
-	const handleClickEdit = (record: any) => {
-		console.log('record', record);
+	const handleClickEdit = (record: TypeRecord) => {
 		setUserNameHyberLink(record.login);
 
 		showModalUpdate();
@@ -115,24 +111,23 @@ const UserAccount = () => {
 			.catch(err => {
 				console.log(err);
 			});
-		console.log('userGroup', userGroup);
 	}, []);
-	const userRole = userGroup.map((item: any, i: number) => {
+	const userRole = userGroup.map((item: TypeDataUserRole, i: number) => {
 		return {
 			id: item.id,
 			name: item.name,
 		};
 	});
 
-	const statusStaff = dataGroups.map((item: any, i: number) => {
+	const statusStaff = dataGroups.map((item: TypeDataGroups, i: number) => {
 		return {
 			status: item.displayText,
 			value: item.value,
 		};
 	});
 	const handleChangeStatus = (e: any) => {
-		const status = statusStaff.find((item: any, i: number) => {
-			if (i == e) {
+		const status = statusStaff.find((item: TypeDataGroups, i: number) => {
+			if (i === e) {
 				return item;
 			}
 		}).value;
@@ -148,7 +143,7 @@ const UserAccount = () => {
 		});
 	};
 	const handleChangeFunctionUser = (e: any) => {
-		userRole.map((item: any, i: number) => {
+		userRole.map((item: TypeDataUserRole, i: number) => {
 			if (i == e) {
 				setGroupUserID(item.id);
 			}
@@ -176,7 +171,7 @@ const UserAccount = () => {
 		{
 			title: 'Tên đăng nhập',
 			dataIndex: 'login',
-			render: (_: any, record: any) => (
+			render: (_: any, record: TypeRecord) => (
 				<div
 					onClick={() => {
 						console.log('record', record);
@@ -199,7 +194,7 @@ const UserAccount = () => {
 		{
 			title: 'Thao tác',
 			dataIndex: 'action',
-			render: (_: any, record: any) => (
+			render: (_: any, record: TypeRecord) => (
 				<Space size="middle">
 					<EditOutlined
 						className="mr-3  cursor-pointer "
@@ -217,7 +212,7 @@ const UserAccount = () => {
 			),
 		},
 	];
-	console.log('dataUser', dataUser);
+
 	const dataListAllUser = dataUser.map((item: TypeDataUser, i: number) => {
 		return {
 			no: i + 1,
@@ -254,7 +249,6 @@ const UserAccount = () => {
 	};
 
 	const handleChangeActivityOk = () => {
-		console.log('idid:', itemId);
 		putChangeActivity(itemId);
 		const indexUser = dataUser.findIndex((item: TypeDataUser) => item.id === itemId);
 		console.log('index', indexUser);
@@ -262,24 +256,19 @@ const UserAccount = () => {
 			dataUser[indexUser].status.value = currentStatusItem ? USER_STATUS.ACTIVE : USER_STATUS.UNACTIVE;
 		}
 		setIsModalChangeActivity(false);
-		console.log('dataUser', dataUser);
 	};
-	const handleClickChangeSwitch = (item: any) => {
-		console.log('switch', item);
-	};
+
 	const handleChangeActivityCancel = () => {
 		setIsModalChangeActivity(false);
 	};
 
 	const hadleClickChangeActivity = (id: string, data: boolean) => {
-		console.log('idSiwtch, ', id);
 		showModalChangeActivity();
 		setItemId(id);
 		setCurrenStatustItem(data);
 	};
 	// change pagiantion
 	const handleChange = (e: any) => {
-		console.log(e.target.value);
 		if (typingTimeoutRef.current) {
 			clearTimeout(typingTimeoutRef.current);
 		} else {
@@ -336,11 +325,7 @@ const UserAccount = () => {
 				<div className="mb-4 flex">
 					<div className="mr-3">
 						<h2>Trạng thái</h2>
-						<Select
-							defaultValue={'--Tất cả-'}
-							style={{ width: '150px' }}
-							onChange={e => handleChangeStatus(e)}
-						>
+						<Select defaultValue={'--Tất cả-'} className="w-[150px]" onChange={e => handleChangeStatus(e)}>
 							{statusStaff.map((item: any, i: number) => (
 								<Option key={i}>{item.status}</Option>
 							))}
@@ -350,7 +335,7 @@ const UserAccount = () => {
 						<h2>Vai trò người dùng</h2>
 						<Select
 							defaultValue={'-Tất cả-'}
-							style={{ width: '150px' }}
+							className="w-[150px]"
 							onChange={e => handleChangeFunctionUser(e)}
 						>
 							{userRole.map((item: any, i: number) => (
@@ -369,7 +354,7 @@ const UserAccount = () => {
 						defaultCurrent={1}
 						total={totalPages}
 						defaultPageSize={6}
-						style={{ display: 'flex', justifyContent: 'end' }}
+						className="flex justify-end"
 					/>
 				</div>
 				<div className="">
@@ -399,7 +384,6 @@ const UserAccount = () => {
 						showModalChangeActivity={showModalChangeActivity}
 						handleChangeActivityOk={handleChangeActivityOk}
 						handleChangeActivityCancel={handleChangeActivityCancel}
-						handleClickChangeSwitch={handleClickChangeSwitch}
 						itemId={itemId}
 						currentStatusItem={currentStatusItem}
 					/>

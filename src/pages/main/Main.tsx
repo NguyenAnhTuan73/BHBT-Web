@@ -183,7 +183,7 @@ const Main: React.FC = () => {
 								);
 							})} */}
 					</Sider>
-					<div className="bg-white ml-3 w-full h-[85vh] ">
+					<div className="bg-white ml-3 w-full  ">
 						<div className="py-3 px-4 h-full">
 							<Outlet />
 						</div>

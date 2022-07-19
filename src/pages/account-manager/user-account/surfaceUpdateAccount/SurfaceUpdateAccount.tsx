@@ -94,7 +94,7 @@ const SurfaceUpdateAccount = (props: any) => {
 					<Select placeholder="-Chọn nhân viên-">
 						{dataAllUser.map((item: any, index: number) => {
 							return (
-								<>
+								<div key={index}>
 									{item.employee !== null ? (
 										<Option key={index} value={item?.employee?.name}>
 											{item.employee?.no}-{item?.employee?.name}
@@ -102,7 +102,7 @@ const SurfaceUpdateAccount = (props: any) => {
 									) : (
 										''
 									)}
-								</>
+								</div>
 							);
 						})}
 					</Select>
